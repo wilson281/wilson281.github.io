@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+Host: www.credit-online.pp.ua
+Sitemap: https://www.credit-online.pp.ua/ukr/sitemap.xml
