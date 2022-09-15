@@ -14,7 +14,7 @@ background-image: url('header.jpg');
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 30px 15px;
+    padding: 5px 15px;
 border: 5px solid rgba(0, 0, 0, .4);
     box-sizing: border-box;
     max-width: 100%;
@@ -34,9 +34,10 @@ border: 5px solid rgba(0, 0, 0, .4);
 .menu li a:hover{
     color: #FA4A0C;
 }
+.center {text-align: center}
  h2 {
 font-size: 150%;
-color: yellow;
+color: black;
 text-align: left;}
 .block0 {
   display: flex; 
@@ -65,13 +66,14 @@ border: 5px solid rgba(0, 0, 0, .4);
 }
 iframe {
 border:0px;
-height:200px;
-width:200px;
+height:600px;
+width:300px;
 }
 .footer {
 width: 100%;
 background-color:#C0C0C0;
 border: 1px solid rgba(0, 0, 0, .4);
+text-align: center
 }
 @media (max-width:600px){
 .block0 {
