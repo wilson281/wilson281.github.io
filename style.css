@@ -75,8 +75,12 @@ width:300px;
 width: 100%;
 background-color:#C0C0C0;
 border: 1px solid rgba(0, 0, 0, .4);
-text-align: center
-}
+text-align: center;
+ display: flex;
+ justify-content: space-between;
+    padding: 5px 15px;
+ box-sizing: border-box;
+    }
 @media (max-width:600px){
 .block0 {
 width: 100%;
