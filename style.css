@@ -39,6 +39,8 @@ border: 5px solid rgba(0, 0, 0, .4);
 font-size: 150%;
 color: black;
 text-align: left;}
+ h1 {
+font-size: 150%;}
 .block0 {
   display: flex; 
 justify-content: center
