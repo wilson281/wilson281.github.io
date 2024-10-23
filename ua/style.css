@@ -10,7 +10,7 @@ font-family: 'Ibarra Real Nova', serif;
     font-size: 1.1rem;
 }
 .header{
-background-image: url('header.jpg');
+background-image: url('https://choiceshop.site/header.jpg');
     display: flex;
     align-items: center;
     justify-content: space-between;
