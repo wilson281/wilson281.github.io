@@ -1,92 +1,211 @@
-*{
-    padding: 0; margin: 0;
+/* Custom CSS для додаткових стилів та анімацій */
+
+/* Визначення шрифту Inter */
+.font-inter {
+    font-family: 'Inter', sans-serif;
 }
-html, body {
-    overflow-x: hidden;
-background-image: url('360_07.png');
-font-family: 'Ibarra Real Nova', serif;
-    color: black;
-    line-height: 1.5;
+
+/* Стиль для спінера завантаження */
+.loader {
+    border-top-color: #3498db;
+    -webkit-animation: spinner 1.5s linear infinite;
+    animation: spinner 1.5s linear infinite;
+}
+
+@-webkit-keyframes spinner {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Додаткові стилі для карток прогнозу */
+.forecast-card {
+    background-color: #f0f8ff; /* Light blue background */
+    border: 1px solid #e0eaf0;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out;
+}
+
+.forecast-card:hover {
+    transform: translateY(-5px);
+}
+
+.forecast-card img {
+    width: 60px; /* Розмір іконок погоди */
+    height: 60px;
+    margin-bottom: 0.5rem;
+}
+
+.forecast-card p {
+    margin: 0.25rem 0;
+    color: #333;
+}
+
+.forecast-card .date {
+    font-weight: 600;
+    color: #0056b3;
     font-size: 1.1rem;
 }
-.header{
-background-image: url('header.jpg');
+
+.forecast-card .temp {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.forecast-card .description {
+    font-size: 0.9rem;
+    color: #555;
+    text-transform: capitalize;
+}
+
+/* Styles for hourly forecast cards */
+.hourly-card {
+    background-color: #e6f7ff; /* Lighter blue background */
+    border: 1px solid #d0eaff;
+    border-radius: 8px;
+    padding: 0.75rem;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding: 5px 15px;
-border: 5px solid rgba(0, 0, 0, .4);
-    box-sizing: border-box;
-    max-width: 100%;
-    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out;
 }
-.menu{
+
+.hourly-card:hover {
+    transform: translateY(-3px);
+}
+
+.hourly-card img {
+    width: 48px; /* Smaller icons for hourly forecast */
+    height: 48px;
+    margin-bottom: 0.25rem;
+}
+
+/* Styles for news articles */
+.news-article-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     display: flex;
-    list-style: none;
-    flex-wrap: wrap;
+    flex-direction: column;
+    transition: transform 0.2s ease-in-out;
 }
-.menu li{
-    margin-left: 94px;
+
+.news-article-card:hover {
+    transform: translateY(-5px);
 }
-.menu li a{
-    color:white; text-decoration: none;
+
+.news-article-card img {
+    width: 100%;
+    height: 150px; /* Fixed height for consistency */
+    object-fit: cover; /* Cover the area, cropping if necessary */
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
 }
-.menu li a:hover{
-    color: #FA4A0C;
+
+.news-article-card h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
 }
-.center {text-align: center}
- h2 {
-font-size: 150%;
-color: black;
-text-align: left;}
- h1 {
-font-size: 150%;}
-.block0 {
-  display: flex; 
-justify-content: center
+
+.news-article-card p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.75rem;
+    flex-grow: 1; /* Allow description to take available space */
 }
-.block2 {
-  background:white;
-width: 600px;
-padding: 10px 10px;
-border: 5px solid rgba(0, 0, 0, .4);
-    box-sizing: border-box;
-    margin: 0 ;
+
+.news-article-card .source {
+    font-size: 0.8rem;
+    color: #777;
+    margin-bottom: 0.5rem;
 }
-.block1 {
-background-image: url('360_07.png');
-  margin:0px;
-  width: 330px; 
+
+.news-article-card a {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    align-self: flex-start; /* Align button to the start */
+    transition: background-color 0.2s ease-in-out;
 }
-.block1_2 {
-  background:white;
- margin:0px;
-  width: 100%;
-padding: 10px 10px;
-border: 5px solid rgba(0, 0, 0, .4);
- box-sizing: border-box;
+
+.news-article-card a:hover {
+    background-color: #0056b3;
 }
-.footer {
-width: 100%;
-background-color:#C0C0C0;
-border: 1px solid rgba(0, 0, 0, .4);
-text-align: center;
- display: flex;
- justify-content: space-between;
-    padding: 5px 15px;
- box-sizing: border-box;
+
+
+/* Адаптивні стилі для контейнера погоди та новин */
+@media (max-width: 768px) {
+    .weather-container {
+        flex-direction: column; /* На мобільних пристроях елементи будуть розташовані вертикально */
+        padding: 1.5rem;
     }
-@media (max-width:600px){
-.block0 {
-width: 100%;
- flex-direction: column;
+
+    .weather-container > div {
+        width: 100%; /* Повна ширина для обох секцій */
+    }
+
+    .weather-container h1, .weather-container h2, .weather-container h3, .news-container h2 {
+        text-align: center; /* Центрування заголовків на мобільних */
+    }
+
+    #current-weather-display, #today-hourly-forecast-display {
+        min-height: auto; /* Зняти мінімальну висоту на мобільних */
+    }
+
+    #forecast-display, #news-feed {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Більш гнучка сітка для прогнозу та новин */
+    }
+
+    #hourly-cards-container {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Більш гнучка сітка для погодинного прогнозу */
+    }
 }
-.block2 {
-  background:white;
-  width: 100%;
-}
-.block1 {
- background:#F9F9F9;
- width: 100%; 
-}
+
+@media (max-width: 480px) {
+    .weather-container, .news-container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 2.5rem; /* Зменшення розміру заголовка на дуже малих екранах */
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    input, button {
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+    .news-article-card img {
+        height: 120px; /* Зменшення висоти зображення на малих екранах */
+    }
 }

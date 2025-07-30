@@ -1,10 +1,82 @@
-<!-- HTML meta refresh URL redirection -->
-<html>
+<!DOCTYPE html>
+<html lang="uk">
 <head>
-   <meta http-equiv="refresh"
-   content="0; url=https://tinyurl.com/metabolismboosterpills">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода Київ сьогодні та прогноз на 5 днів</title>
+<link rel="canonical" href="https://prognozpogody.pp.ua/">
+    <!-- Підключення Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Підключення шрифту Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Підключення власного CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-   
+<body class="bg-gradient-to-r from-blue-400 to-purple-500 min-h-screen flex flex-col items-center justify-center p-4 font-inter">
+    <div class="weather-container bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-4xl flex flex-col md:flex-row gap-6 md:gap-8">
+        <!-- Секція введення міста та поточна погода -->
+        <div class="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Погода</h1>
+
+            <div class="w-full mb-6">
+                <input type="text" id="city-input" placeholder="Введіть місто (наприклад, Київ)"
+                       class="w-full p-3 md:p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                <button id="search-button"
+                        class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 md:py-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 text-lg">
+                    Пошук
+                </button>
+            </div>
+
+            <!-- Поточна погода -->
+            <div id="current-weather-display" class="w-full bg-blue-50 bg-opacity-70 rounded-xl p-5 md:p-6 shadow-md flex flex-col items-center justify-center text-gray-800 min-h-[200px]">
+                <p class="text-gray-600 text-lg">Завантаження даних про погоду...</p>
+                <!-- Тут буде відображатися поточна погода -->
+            </div>
+
+            <!-- Прогноз на сьогодні через кожні 3 години -->
+            <div id="today-hourly-forecast-display" class="w-full bg-blue-50 bg-opacity-70 rounded-xl p-5 md:p-6 shadow-md mt-6 hidden">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Прогноз на сьогодні (кожні 3 години)</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="hourly-cards-container">
+                    <!-- Тут буде відображатися погодинний прогноз на сьогодні -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Секція прогнозу на 5 днів -->
+        <div class="flex-1 flex flex-col">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center md:text-left">Прогноз на 5 днів у Києві</h2>
+            <div id="forecast-display" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[300px]">
+                <p class="text-gray-600 text-lg text-center col-span-full">Завантаження прогнозу...</p>
+                <!-- Тут буде відображатися прогноз на 5 днів -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Новий блок новин -->
+    <div class="news-container bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-4xl mt-8">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center">Останні новини</h2>
+        <div id="news-feed" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p class="text-gray-600 text-lg text-center col-span-full">Завантаження новин...</p>
+            <!-- Тут будуть завантажуватися новини -->
+        </div>
+    </div>
+
+    <!-- Обробка завантаження та помилок -->
+    <div id="loading-spinner" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24"></div>
+    </div>
+
+    <div id="error-message-box" class="hidden fixed inset-0 bg-red-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg p-6 shadow-lg text-center">
+            <h3 class="text-xl font-bold text-red-700 mb-4">Помилка!</h3>
+            <p id="error-text" class="text-gray-700 mb-6"></p>
+            <button id="close-error-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
+                Закрити
+            </button>
+        </div>
+    </div>
+
+    <!-- Підключення власного JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
