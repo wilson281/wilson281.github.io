@@ -14,7 +14,7 @@ const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial
 const openWeatherApiKey = '0b797f6c2aa8d32277d4d386ce49691e';
 
 // URL RSS-стрічки новин RBC.UA
-const rssFeedUrl = 'https://www.rbc.ua/static/rss/newsline.img.rus.rss.xml';
+const rssFeedUrl = 'https://www.rbc.ua/static/rss/newsline.img.ukr.rss.xml';
 
 // !!! ВАЖЛИВО: Використовуємо новий публічний CORS-проксі.
 // Пам'ятайте, що публічні проксі можуть бути нестабільними або мати обмеження.
