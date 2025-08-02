@@ -1,211 +1,393 @@
-/* Custom CSS для додаткових стилів та анімацій */
+ <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Визначення шрифту Inter */
-.font-inter {
-    font-family: 'Inter', sans-serif;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
 
-/* Стиль для спінера завантаження */
-.loader {
-    border-top-color: #3498db;
-    -webkit-animation: spinner 1.5s linear infinite;
-    animation: spinner 1.5s linear infinite;
-}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-@-webkit-keyframes spinner {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-}
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
 
-@keyframes spinner {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
 
-/* Додаткові стилі для карток прогнозу */
-.forecast-card {
-    background-color: #f0f8ff; /* Light blue background */
-    border: 1px solid #e0eaf0;
-    border-radius: 12px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease-in-out;
-}
+        .location-input {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
 
-.forecast-card:hover {
-    transform: translateY(-5px);
-}
+        .location-input input {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-.forecast-card img {
-    width: 60px; /* Розмір іконок погоди */
-    height: 60px;
-    margin-bottom: 0.5rem;
-}
+        .location-input button {
+            padding: 12px 24px;
+            background: #00b894;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
 
-.forecast-card p {
-    margin: 0.25rem 0;
-    color: #333;
-}
+        .location-input button:hover {
+            background: #00a085;
+        }
 
-.forecast-card .date {
-    font-weight: 600;
-    color: #0056b3;
-    font-size: 1.1rem;
-}
+        .weather-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-.forecast-card .temp {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #007bff;
-}
+        .weather-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
 
-.forecast-card .description {
-    font-size: 0.9rem;
-    color: #555;
-    text-transform: capitalize;
-}
+        .weather-card.hourly {
+            grid-column: 1 / -1;
+        }
 
-/* Styles for hourly forecast cards */
-.hourly-card {
-    background-color: #e6f7ff; /* Lighter blue background */
-    border: 1px solid #d0eaff;
-    border-radius: 8px;
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease-in-out;
-}
+        .hourly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
 
-.hourly-card:hover {
-    transform: translateY(-3px);
-}
+        .hourly-item {
+            background: rgba(116, 185, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            border: 1px solid rgba(116, 185, 255, 0.3);
+            min-width: 100px;
+        }
 
-.hourly-card img {
-    width: 48px; /* Smaller icons for hourly forecast */
-    height: 48px;
-    margin-bottom: 0.25rem;
-}
+        .hourly-time {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2d3436;
+        }
 
-/* Styles for news articles */
-.news-article-card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease-in-out;
-}
+        .hourly-icon {
+            width: 35px;
+            height: 35px;
+            margin: 0 auto 8px;
+        }
 
-.news-article-card:hover {
-    transform: translateY(-5px);
-}
+        .hourly-temp {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #0984e3;
+            margin-bottom: 5px;
+        }
 
-.news-article-card img {
-    width: 100%;
-    height: 150px; /* Fixed height for consistency */
-    object-fit: cover; /* Cover the area, cropping if necessary */
-    border-radius: 8px;
-    margin-bottom: 0.75rem;
-}
+        .hourly-desc {
+            font-size: 0.8rem;
+            color: #636e72;
+            text-transform: capitalize;
+        }
 
-.news-article-card h4 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
-}
+        .weather-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #2d3436;
+            border-bottom: 2px solid #74b9ff;
+            padding-bottom: 10px;
+        }
 
-.news-article-card p {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 0.75rem;
-    flex-grow: 1; /* Allow description to take available space */
-}
+        .weather-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-.news-article-card .source {
-    font-size: 0.8rem;
-    color: #777;
-    margin-bottom: 0.5rem;
-}
+        .weather-main {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-.news-article-card a {
-    display: inline-block;
-    background-color: #007bff;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    align-self: flex-start; /* Align button to the start */
-    transition: background-color 0.2s ease-in-out;
-}
+        .weather-icon {
+            width: 60px;
+            height: 60px;
+        }
 
-.news-article-card a:hover {
-    background-color: #0056b3;
-}
+        .temperature {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #0984e3;
+        }
 
+        .weather-details {
+            text-align: right;
+        }
 
-/* Адаптивні стилі для контейнера погоди та новин */
-@media (max-width: 768px) {
-    .weather-container {
-        flex-direction: column; /* На мобільних пристроях елементи будуть розташовані вертикально */
-        padding: 1.5rem;
-    }
+        .weather-description {
+            font-size: 1.1rem;
+            color: #636e72;
+            margin-bottom: 5px;
+            text-transform: capitalize;
+        }
 
-    .weather-container > div {
-        width: 100%; /* Повна ширина для обох секцій */
-    }
+        .weather-meta {
+            font-size: 0.9rem;
+            color: #636e72;
+        }
 
-    .weather-container h1, .weather-container h2, .weather-container h3, .news-container h2 {
-        text-align: center; /* Центрування заголовків на мобільних */
-    }
+        .forecast-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
 
-    #current-weather-display, #today-hourly-forecast-display {
-        min-height: auto; /* Зняти мінімальну висоту на мобільних */
-    }
+        .forecast-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2d3436;
+            border-bottom: 2px solid #74b9ff;
+            padding-bottom: 10px;
+        }
 
-    #forecast-display, #news-feed {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Більш гнучка сітка для прогнозу та новин */
-    }
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
 
-    #hourly-cards-container {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Більш гнучка сітка для погодинного прогнозу */
-    }
-}
+        .forecast-item {
+            background: rgba(116, 185, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(116, 185, 255, 0.3);
+        }
 
-@media (max-width: 480px) {
-    .weather-container, .news-container {
-        padding: 1rem;
-    }
+        .forecast-date {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2d3436;
+        }
 
-    h1 {
-        font-size: 2.5rem; /* Зменшення розміру заголовка на дуже малих екранах */
-    }
+        .forecast-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+        }
 
-    h2 {
-        font-size: 2rem;
-    }
+        .forecast-temp {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0984e3;
+            margin-bottom: 5px;
+        }
+  .forecast-temp-range {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
 
-    h3 {
-        font-size: 1.5rem;
-    }
+        .forecast-temp-max {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e74c3c;
+        }
 
-    input, button {
-        font-size: 1rem;
-        padding: 0.75rem;
-    }
-    .news-article-card img {
-        height: 120px; /* Зменшення висоти зображення на малих екранах */
-    }
-}
+        .forecast-temp-min {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .temp-max {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .temp-min {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .temperature-range {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .forecast-desc {
+            font-size: 0.9rem;
+            color: #636e72;
+            text-transform: capitalize;
+        }
+
+        .news-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .news-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2d3436;
+            border-bottom: 2px solid #74b9ff;
+            padding-bottom: 10px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .news-item {
+            background: rgba(116, 185, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(116, 185, 255, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .news-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .news-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2d3436;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .news-title a {
+            color: #2d3436;
+            text-decoration: none;
+        }
+
+        .news-title a:hover {
+            color: #0984e3;
+        }
+
+        .news-description {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #74b9ff;
+        }
+
+        .news-date {
+            font-weight: bold;
+        }
+
+        .news-source {
+            background: #74b9ff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+
+        .news-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: none; /* Спочатку приховано, показується після завантаження */
+            transition: opacity 0.3s ease;
+        }
+
+        .news-image:hover {
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .error {
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .location-input input {
+                width: 250px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
