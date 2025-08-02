@@ -14,25 +14,30 @@ const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial
 const openWeatherApiKey = '0b797f6c2aa8d32277d4d386ce49691e';
 
 // URL RSS-стрічки новин RBC.UA
-const rssFeedUrl = 'https://www.rbc.ua/static/rss/newsline.img.ukr.rss.xml';
+const rssFeedUrl = 'https://www.rbc.ua/static/rss/newsline.img.rus.rss.xml';
 
-// !!! ВАЖЛИВО: Використовуємо новий публічний CORS-проксі.
-// Пам'ятайте, що публічні проксі можуть бути нестабільними або мати обмеження.
+// Використовуємо публічний CORS-проксі для обходу обмежень міждоменних запитів
 const corsProxyBaseUrl = 'https://corsproxy.io/?';
 
 
 // Отримання посилань на елементи DOM
 const cityInput = document.getElementById('city-input');
 const searchButton = document.getElementById('search-button');
-const currentWeatherDisplay = document.getElementById('current-weather-display');
+const tomorrowWeatherDisplay = document.getElementById('current-weather-display'); // Змінена назва
 const forecastDisplay = document.getElementById('forecast-display');
-const todayHourlyForecastDisplay = document.getElementById('today-hourly-forecast-display');
+const tomorrowHourlyForecastDisplay = document.getElementById('today-hourly-forecast-display'); // Змінена назва
 const hourlyCardsContainer = document.getElementById('hourly-cards-container');
 const newsFeedContainer = document.getElementById('news-feed'); // Елемент для новин
 const loadingSpinner = document.getElementById('loading-spinner');
 const errorMessageBox = document.getElementById('error-message-box');
 const errorText = document.getElementById('error-text');
 const closeErrorButton = document.getElementById('close-error-button');
+
+// Оновлюємо заголовок блоку погоди на завтра
+document.getElementById('current-weather-header').textContent = 'Погода на завтра';
+
+// Оновлюємо заголовок погодинного прогнозу
+document.getElementById('today-hourly-forecast-header').textContent = 'Погодинний прогноз на завтра';
 
 // Місто за замовчуванням, яке завантажується при запуску
 const defaultCity = 'Kyiv';
@@ -65,9 +70,9 @@ closeErrorButton.addEventListener('click', () => {
  * Очищає поточні відображення погоди та прогнозу.
  */
 function clearWeatherDisplays() {
-    currentWeatherDisplay.innerHTML = '<p class="text-gray-600 text-lg">Введіть місто, щоб побачити погоду.</p>';
+    tomorrowWeatherDisplay.innerHTML = '<p class="text-gray-600 text-lg">Введіть місто, щоб побачити погоду.</p>';
     forecastDisplay.innerHTML = '<p class="text-gray-600 text-lg text-center col-span-full">Прогноз з\'явиться тут.</p>';
-    todayHourlyForecastDisplay.classList.add('hidden'); // Приховуємо погодинний прогноз
+    tomorrowHourlyForecastDisplay.classList.add('hidden'); // Приховуємо погодинний прогноз
     hourlyCardsContainer.innerHTML = '';
 }
 
@@ -134,10 +139,10 @@ async function getWeatherData(city) {
         const currentWeatherData = await currentWeatherResponse.json();
         const forecastData = await forecastResponse.json();
 
-        // Відображаємо дані
-        displayCurrentWeather(currentWeatherData);
-        displayForecast(forecastData); // Прогноз на 5 днів (з мін/макс температурою)
-        displayTodayHourlyForecast(forecastData); // Прогноз на сьогодні (кожні 3 години)
+        // Відображаємо дані відповідно до нової логіки
+        displayTomorrowWeather(currentWeatherData, forecastData);
+        displayForecast(forecastData); // Прогноз на 6 днів (з мін/макс температурою)
+        displayTomorrowHourlyForecast(forecastData); // Погодинний прогноз на завтра
 
     } catch (error) {
         showError(`Не вдалося отримати дані про погоду: ${error.message}`);
@@ -149,21 +154,49 @@ async function getWeatherData(city) {
 }
 
 /**
- * Відображає дані про поточну погоду.
- * @param {object} data - Об'єкт даних поточної погоди з API.
+ * Відображає дані про погоду на завтра.
+ * @param {object} currentData - Об'єкт даних поточної погоди з API.
+ * @param {object} forecastData - Об'єкт даних прогнозу з API.
  */
-function displayCurrentWeather(data) {
-    const { name, main, weather, wind } = data;
-    const temperature = Math.round(main.temp);
-    const feelsLike = Math.round(main.feels_like);
-    const description = weather[0].description;
-    const humidity = main.humidity;
-    const windSpeed = wind.speed; // м/с
-    const iconCode = weather[0].icon;
-    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@4x.png`; // Збільшена іконка
+function displayTomorrowWeather(currentData, forecastData) {
+    const { name } = currentData;
+    const now = new Date();
+    
+    // Знаходимо завтрашній день
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+    const tomorrowDateString = tomorrow.toLocaleDateString('uk-UA', { year: 'numeric', month: 'numeric', day: 'numeric' });
+    
+    let tomorrowWeatherItem = null;
+    
+    // Знаходимо перший запис для завтрашнього дня у прогнозі (зазвичай, 00:00)
+    for(const item of forecastData.list) {
+        const itemDate = new Date(item.dt * 1000);
+        const itemDateString = itemDate.toLocaleDateString('uk-UA', { year: 'numeric', month: 'numeric', day: 'numeric' });
+        if (itemDateString === tomorrowDateString) {
+            tomorrowWeatherItem = item;
+            break;
+        }
+    }
+    
+    if (!tomorrowWeatherItem) {
+        tomorrowWeatherDisplay.innerHTML = `<p class="text-gray-600 text-lg text-center">Немає даних для прогнозу на завтра.</p>`;
+        return;
+    }
 
-    currentWeatherDisplay.innerHTML = `
+    const temperature = Math.round(tomorrowWeatherItem.main.temp);
+    const feelsLike = Math.round(tomorrowWeatherItem.main.feels_like);
+    const description = tomorrowWeatherItem.weather[0].description;
+    const humidity = tomorrowWeatherItem.main.humidity;
+    const windSpeed = tomorrowWeatherItem.wind.speed; // м/с
+    const iconCode = tomorrowWeatherItem.weather[0].icon;
+    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@4x.png`; // Збільшена іконка
+    
+    const formattedDate = tomorrow.toLocaleDateString('uk-UA', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    tomorrowWeatherDisplay.innerHTML = `
         <h2 class="text-3xl md:text-4xl font-bold mb-2 text-gray-800">${name}</h2>
+        <p class="text-lg text-gray-700 mb-4">${formattedDate}</p>
         <div class="flex items-center justify-center mb-4">
             <img src="${iconUrl}" alt="${description}" class="w-24 h-24 md:w-32 md:h-32">
             <p class="text-5xl md:text-6xl font-bold text-blue-700">${temperature}°C</p>
@@ -176,7 +209,7 @@ function displayCurrentWeather(data) {
 }
 
 /**
- * Відображає прогноз погоди на 5 днів, включаючи мінімальну та максимальну температуру доби.
+ * Відображає прогноз погоди на 6 днів, включаючи сьогодні.
  * Для іконки та опису використовується запис о 12:00 PM.
  * @param {object} data - Об'єкт даних прогнозу з API.
  */
@@ -212,19 +245,10 @@ function displayForecast(data) {
         return new Date(a).getTime() - new Date(b).getTime();
     });
 
-    // Відображаємо до 5 днів прогнозу (починаючи з наступного дня, якщо сьогоднішній день вже пройшов 12:00)
+    // Відображаємо до 6 днів прогнозу, включаючи сьогодні
     let daysDisplayed = 0;
-    const now = new Date();
-    const todayDateString = now.toLocaleDateString('uk-UA', { year: 'numeric', month: 'numeric', day: 'numeric' });
-
     for (const dateString of sortedDates) {
-        // Пропускаємо сьогоднішній день, якщо ми вже відобразили його погодинний прогноз
-        // Або якщо для сьогоднішнього дня немає запису о 12:00
-        if (dateString === todayDateString && (!dailyData[dateString].noonItem || dailyData[dateString].noonItem.dt * 1000 < now.getTime())) {
-            continue;
-        }
-
-        if (daysDisplayed >= 5) break; // Обмежуємо до 5 днів
+        if (daysDisplayed >= 6) break; // Обмежуємо до 6 днів
 
         const dayData = dailyData[dateString];
         const minTemp = Math.round(Math.min(...dayData.temps));
@@ -235,7 +259,9 @@ function displayForecast(data) {
         if (!displayItem) continue; // Пропускаємо, якщо немає даних для відображення
 
         const date = new Date(displayItem.dt * 1000);
+        const now = new Date();
         const displayDate = date.toLocaleDateString('uk-UA', { weekday: 'short', day: 'numeric', month: 'short' });
+
         const description = displayItem.weather[0].description;
         const iconCode = displayItem.weather[0].icon;
         const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`; // Іконка для прогнозу
@@ -253,19 +279,21 @@ function displayForecast(data) {
     }
 
     if (daysDisplayed === 0) {
-        forecastDisplay.innerHTML = '<p class="text-gray-600 text-lg text-center col-span-full">Немає даних для прогнозу на наступні 5 днів.</p>';
+        forecastDisplay.innerHTML = '<p class="text-gray-600 text-lg text-center col-span-full">Немає даних для прогнозу.</p>';
     }
 }
 
 /**
- * Відображає погодинний прогноз на сьогодні (кожні 3 години).
+ * Відображає погодинний прогноз на завтра (кожні 3 години).
  * @param {object} data - Об'єкт даних прогнозу з API.
  */
-function displayTodayHourlyForecast(data) {
+function displayTomorrowHourlyForecast(data) {
     hourlyCardsContainer.innerHTML = ''; // Очищаємо попередній погодинний прогноз
 
     const now = new Date();
-    const todayDateString = now.toLocaleDateString('uk-UA', { year: 'numeric', month: 'numeric', day: 'numeric' });
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+    const tomorrowDateString = tomorrow.toLocaleDateString('uk-UA', { year: 'numeric', month: 'numeric', day: 'numeric' });
 
     let hasHourlyData = false;
 
@@ -273,9 +301,8 @@ function displayTodayHourlyForecast(data) {
         const itemDate = new Date(item.dt * 1000);
         const itemDateString = itemDate.toLocaleDateString('uk-UA', { year: 'numeric', month: 'numeric', day: 'numeric' });
 
-        // Перевіряємо, чи запис належить до сьогоднішнього дня і чи він ще не минув
-        // Додаємо невеликий буфер, щоб включити поточний 3-годинний блок, навіть якщо його початок вже минув.
-        if (itemDateString === todayDateString && itemDate.getTime() >= now.getTime() - (3600 * 1000 * 3)) {
+        // Перевіряємо, чи запис належить до завтрашнього дня
+        if (itemDateString === tomorrowDateString) {
             hasHourlyData = true;
             const time = itemDate.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
             const temperature = Math.round(item.main.temp);
@@ -296,10 +323,10 @@ function displayTodayHourlyForecast(data) {
     });
 
     if (hasHourlyData) {
-        todayHourlyForecastDisplay.classList.remove('hidden');
+        tomorrowHourlyForecastDisplay.classList.remove('hidden');
     } else {
-        todayHourlyForecastDisplay.classList.add('hidden');
-        hourlyCardsContainer.innerHTML = '<p class="text-gray-600 text-lg text-center col-span-full">Немає погодинного прогнозу на сьогодні.</p>';
+        tomorrowHourlyForecastDisplay.classList.add('hidden');
+        hourlyCardsContainer.innerHTML = '<p class="text-gray-600 text-lg text-center col-span-full">Немає погодинного прогнозу на завтра.</p>';
     }
 }
 
@@ -388,40 +415,3 @@ function displayRssNews(articles) {
         newsFeedContainer.appendChild(newsCard);
     });
 }
-
-// Ініціалізація Firebase (якщо потрібне зберігання даних)
-// let app;
-// let db;
-// let auth;
-// let userId;
-
-// if (firebaseConfig) {
-//     app = initializeApp(firebaseConfig);
-//     db = getFirestore(app);
-//     auth = getAuth(app);
-
-//     // Слухач зміни стану автентифікації
-//     onAuthStateChanged(auth, async (user) => {
-//         if (user) {
-//             userId = user.uid;
-//             // console.log("User is signed in:", userId);
-//             // Тут можна завантажувати дані користувача, якщо вони є
-//         } else {
-//             // console.log("No user signed in. Signing in anonymously...");
-//             try {
-//                 if (initialAuthToken) {
-//                     await signInWithCustomToken(auth, initialAuthToken);
-//                 } else {
-//                     await signInAnonymously(auth);
-//                 }
-//                 userId = auth.currentUser?.uid || crypto.randomUUID();
-//                 // console.log("Signed in anonymously or with custom token:", userId);
-//             } catch (error) {
-//                 console.error("Firebase authentication failed:", error);
-//             }
-//         }
-//     });
-// } else {
-//     console.warn("Firebase config not found. Firebase features will not be available.");
-//     userId = crypto.randomUUID(); // Генеруємо випадковий ID, якщо Firebase не ініціалізовано
-// }
