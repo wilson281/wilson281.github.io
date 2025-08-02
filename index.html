@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="weather-card hourly">
-                    <h2>Погодинний прогноз (кожні 3 години)</h2>
+                    <h2>Погодинний прогноз на добу (кожні 3 години)</h2>
                     <div id="hourlyWeather"></div>
                 </div>
             </div>
@@ -77,9 +77,9 @@
             try {
                 // Спробуємо кілька різних CORS proxy
                 const proxies = [
+                    'https://corsproxy.io/?',
                     'https://api.allorigins.win/raw?url=',
-                    'https://cors-anywhere.herokuapp.com/',
-                    'https://corsproxy.io/?'
+                    'https://cors-anywhere.herokuapp.com/'
                 ];
 
                 let geoData = null;
