@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогноз погоди</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .location-input {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .location-input input {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .location-input button {
+            padding: 12px 24px;
+            background: #00b894;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
+
+        .location-input button:hover {
+            background: #00a085;
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .weather-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .weather-card.hourly {
+            grid-column: 1 / -1;
+        }
+
+        .hourly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        .hourly-item {
+            background: rgba(116, 185, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            border: 1px solid rgba(116, 185, 255, 0.3);
+            min-width: 100px;
+        }
+
+        .hourly-time {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2d3436;
+        }
+
+        .hourly-icon {
+            width: 35px;
+            height: 35px;
+            margin: 0 auto 8px;
+        }
+
+        .hourly-temp {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #0984e3;
+            margin-bottom: 5px;
+        }
+
+        .hourly-desc {
+            font-size: 0.8rem;
+            color: #636e72;
+            text-transform: capitalize;
+        }
+
+        .weather-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #2d3436;
+            border-bottom: 2px solid #74b9ff;
+            padding-bottom: 10px;
+        }
+
+        .weather-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .weather-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .temperature {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #0984e3;
+        }
+
+        .weather-details {
+            text-align: right;
+        }
+
+        .weather-description {
+            font-size: 1.1rem;
+            color: #636e72;
+            margin-bottom: 5px;
+            text-transform: capitalize;
+        }
+
+        .weather-meta {
+            font-size: 0.9rem;
+            color: #636e72;
+        }
+
+        .forecast-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .forecast-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2d3436;
+            border-bottom: 2px solid #74b9ff;
+            padding-bottom: 10px;
+        }
+
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .forecast-item {
+            background: rgba(116, 185, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(116, 185, 255, 0.3);
+        }
+
+        .forecast-date {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2d3436;
+        }
+
+        .forecast-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+        }
+
+        .forecast-temp {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0984e3;
+            margin-bottom: 5px;
+        }
+
+        .forecast-desc {
+            font-size: 0.9rem;
+            color: #636e72;
+            text-transform: capitalize;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .error {
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .location-input input {
+                width: 250px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌤️ Прогноз погоди</h1>
+            <p>Актуальна інформація про погоду</p>
+        </div>
+
+        <div class="location-input">
+            <input type="text" id="cityInput" placeholder="Введіть назву міста..." value="Дніпро">
+            <button onclick="getWeather()">Пошук</button>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            Завантаження...
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="weatherContent" style="display: none;">
+            <div class="weather-grid">
+                <div class="weather-card">
+                    <h2>Погода на завтра</h2>
+                    <div id="tomorrowWeather"></div>
+                </div>
+
+                <div class="weather-card hourly">
+                    <h2>Погодинний прогноз (кожні 3 години)</h2>
+                    <div id="hourlyWeather"></div>
+                </div>
+            </div>
+
+            <div class="forecast-section">
+                <h2>Прогноз на 6 днів</h2>
+                <div id="forecastGrid" class="forecast-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const openWeatherApiKey = '0b797f6c2aa8d32277d4d386ce49691e';
+
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value.trim();
+            if (!city) {
+                showError('Будь ласка, введіть назву міста');
+                return;
+            }
+
+            showLoading(true);
+            hideError();
+
+            try {
+                // Спробуємо кілька різних CORS proxy
+                const proxies = [
+                    'https://api.allorigins.win/raw?url=',
+                    'https://cors-anywhere.herokuapp.com/',
+                    'https://corsproxy.io/?'
+                ];
+
+                let geoData = null;
+                let forecastData = null;
+
+                for (const proxy of proxies) {
+                    try {
+                        // Отримуємо координати міста
+                        const geoUrl = `${proxy}${encodeURIComponent(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${openWeatherApiKey}`)}`;
+                        const geoResponse = await fetch(geoUrl);
+                        geoData = await geoResponse.json();
+
+                        if (geoData && geoData.length > 0) {
+                            const { lat, lon } = geoData[0];
+
+                            // Отримуємо прогноз на 5 днів
+                            const forecastUrl = `${proxy}${encodeURIComponent(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${openWeatherApiKey}&units=metric&lang=uk`)}`;
+                            const forecastResponse = await fetch(forecastUrl);
+                            forecastData = await forecastResponse.json();
+
+                            if (forecastResponse.ok && forecastData.list) {
+                                displayWeather(forecastData);
+                                return; // Успішно отримали дані
+                            }
+                        }
+                    } catch (proxyError) {
+                        console.log(`Proxy ${proxy} failed:`, proxyError);
+                        continue; // Спробуємо наступний proxy
+                    }
+                }
+
+                // Якщо всі proxy не спрацювали, спробуємо прямий запит
+                try {
+                    const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${openWeatherApiKey}`);
+                    geoData = await geoResponse.json();
+
+                    if (geoData && geoData.length > 0) {
+                        const { lat, lon } = geoData[0];
+                        const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${openWeatherApiKey}&units=metric&lang=uk`);
+                        forecastData = await forecastResponse.json();
+
+                        if (forecastResponse.ok && forecastData.list) {
+                            displayWeather(forecastData);
+                            return;
+                        }
+                    }
+                } catch (directError) {
+                    console.log('Direct request failed:', directError);
+                }
+
+                // Якщо нічого не спрацювало, покажемо тестові дані
+                showTestData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Помилка завантаження даних. Показуємо тестові дані.');
+                showTestData();
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function showTestData() {
+            // Показуємо тестові дані для демонстрації інтерфейсу
+            const now = new Date();
+            const testData = {
+                list: []
+            };
+            
+            // Створюємо 8 записів для погодинного прогнозу (кожні 3 години)
+            for (let i = 0; i < 8; i++) {
+                const time = new Date(now.getTime() + (i * 3 * 60 * 60 * 1000)); // +3 години кожна ітерація
+                const temps = [22, 25, 20, 18, 23, 26, 19, 21];
+                const icons = ['01d', '01d', '03d', '10d', '02d', '01d', '04d', '02d'];
+                const descriptions = ['ясно', 'сонячно', 'хмарно', 'дощ', 'частково хмарно', 'сонячно', 'похмуро', 'малохмарно'];
+                
+                testData.list.push({
+                    dt: Math.floor(time.getTime() / 1000),
+                    main: { temp: temps[i], feels_like: temps[i] + 2, humidity: 65 - i * 2 },
+                    weather: [{ description: descriptions[i], icon: icons[i] }]
+                });
+            }
+            
+            // Додаємо ще кілька записів для денного прогнозу
+            for (let i = 1; i <= 5; i++) {
+                const time = new Date(now.getTime() + (i * 24 * 60 * 60 * 1000));
+                testData.list.push({
+                    dt: Math.floor(time.getTime() / 1000),
+                    main: { temp: 20 + i, feels_like: 22 + i, humidity: 60 },
+                    weather: [{ description: 'тестова погода', icon: '01d' }]
+                });
+            }
+            
+            displayWeather(testData);
+            showError('Показано тестові дані через проблеми з API. Спробуйте пізніше для реальних даних.');
+        }
+
+        function displayWeather(data) {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(12, 0, 0, 0); // Полудень завтра
+
+            const threeLater = new Date(now);
+            threeLater.setHours(threeLater.getHours() + 3);
+            
+            // Знаходимо завтрашню погоду (полудень)
+            const tomorrowForecast = data.list.find(item => {
+                const itemDate = new Date(item.dt * 1000);
+                return itemDate.getDate() === tomorrow.getDate() && 
+                       itemDate.getMonth() === tomorrow.getMonth() &&
+                       itemDate.getHours() >= 11 && itemDate.getHours() <= 13;
+            }) || data.list.find(item => {
+                const itemDate = new Date(item.dt * 1000);
+                return itemDate.getDate() === tomorrow.getDate();
+            });
+
+            // Отримуємо всі погодинні прогнози (кожні 3 години)
+            const hourlyForecasts = data.list.slice(0, 8); // Перші 8 записів (24 години)
+
+            // Відображаємо завтрашню погоду
+            if (tomorrowForecast) {
+                const tomorrowDate = new Date(tomorrowForecast.dt * 1000);
+                document.getElementById('tomorrowWeather').innerHTML = `
+                    <div class="weather-info">
+                        <div class="weather-main">
+                            <img class="weather-icon" src="https://openweathermap.org/img/wn/${tomorrowForecast.weather[0].icon}@2x.png" alt="${tomorrowForecast.weather[0].description}">
+                            <div class="temperature">${Math.round(tomorrowForecast.main.temp)}°C</div>
+                        </div>
+                        <div class="weather-details">
+                            <div class="weather-description">${tomorrowForecast.weather[0].description}</div>
+                            <div class="weather-meta">
+                                ${formatDate(tomorrowDate)}<br>
+                                Відчувається: ${Math.round(tomorrowForecast.main.feels_like)}°C<br>
+                                Вологість: ${tomorrowForecast.main.humidity}%
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Відображаємо погодинний прогноз
+            const hourlyGrid = hourlyForecasts.map(forecast => {
+                const forecastDate = new Date(forecast.dt * 1000);
+                const isToday = forecastDate.getDate() === now.getDate();
+                const timeLabel = isToday ? 
+                    (forecastDate.getHours() <= now.getHours() + 1 ? 'Зараз' : formatHour(forecastDate)) :
+                    formatHour(forecastDate);
+                    
+                return `
+                    <div class="hourly-item">
+                        <div class="hourly-time">${timeLabel}</div>
+                        <img class="hourly-icon" src="https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" alt="${forecast.weather[0].description}">
+                        <div class="hourly-temp">${Math.round(forecast.main.temp)}°C</div>
+                        <div class="hourly-desc">${forecast.weather[0].description}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('hourlyWeather').innerHTML = `
+                <div class="hourly-grid">
+                    ${hourlyGrid}
+                </div>
+            `;
+
+            // Створюємо прогноз на 6 днів (сьогодні + 5 днів)
+            const dailyForecasts = [];
+            const today = new Date();
+            
+            // Додаємо сьогоднішній день
+            const todayForecast = data.list[0]; // Перший елемент списку
+            dailyForecasts.push({
+                date: today,
+                data: todayForecast,
+                isToday: true
+            });
+
+            // Групуємо дані по днях для наступних 5 днів
+            const dailyData = {};
+            data.list.forEach(item => {
+                const date = new Date(item.dt * 1000);
+                const dateKey = date.toDateString();
+                
+                if (date.getDate() !== today.getDate()) { // Пропускаємо сьогоднішній день
+                    if (!dailyData[dateKey] || date.getHours() === 12) {
+                        dailyData[dateKey] = item;
+                    }
+                }
+            });
+
+            // Додаємо наступні 5 днів
+            Object.keys(dailyData).slice(0, 5).forEach(dateKey => {
+                const date = new Date(dateKey);
+                dailyForecasts.push({
+                    date: date,
+                    data: dailyData[dateKey],
+                    isToday: false
+                });
+            });
+
+            // Відображаємо прогноз на 6 днів
+            const forecastGrid = document.getElementById('forecastGrid');
+            forecastGrid.innerHTML = dailyForecasts.map(forecast => `
+                <div class="forecast-item">
+                    <div class="forecast-date">
+                        ${forecast.isToday ? 'Сьогодні' : formatDateShort(forecast.date)}
+                    </div>
+                    <img class="forecast-icon" src="https://openweathermap.org/img/wn/${forecast.data.weather[0].icon}@2x.png" alt="${forecast.data.weather[0].description}">
+                    <div class="forecast-temp">${Math.round(forecast.data.main.temp)}°C</div>
+                    <div class="forecast-desc">${forecast.data.weather[0].description}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('weatherContent').style.display = 'block';
+        }
+
+        function formatHour(date) {
+            return date.toLocaleTimeString('uk-UA', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('uk-UA', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long'
+            });
+        }
+
+        function formatTime(date) {
+            return date.toLocaleDateString('uk-UA', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatDateShort(date) {
+            return date.toLocaleDateString('uk-UA', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short'
+            });
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        // Обробка натискання Enter в полі вводу
+        document.getElementById('cityInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                getWeather();
+            }
+        });
+
+        // Завантажуємо погоду для Дніпра при завантаженні сторінки
+        window.addEventListener('load', function() {
+            getWeather();
+        });
+    </script>
+</body>
+</html>
