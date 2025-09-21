@@ -1,0 +1,85 @@
+<div id="city-widget" style="font-family: Arial, sans-serif; max-width: 400px; border:1px solid #ddd; border-radius:12px; padding:16px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+  <h2 style="margin-top:0;">📊 New York City Data</h2>
+  <p><strong>Population:</strong> <span id="population">Loading...</span></p>
+  <p><strong>Climate (Annual Avg):</strong></p>
+  <ul style="margin-top:0;">
+    <li>🌡 Avg Temp: <span id="avg-temp">Loading...</span> °C</li>
+    <li>🌧 Avg Precipitation: <span id="avg-rain">Loading...</span> mm</li>
+  </ul>
+  <p><strong>Current Weather:</strong></p>
+  <ul style="margin-top:0;">
+    <li>🌡 Temp: <span id="weather-temp">Loading...</span> °C</li>
+    <li>☁ Condition: <span id="weather-cond">Loading...</span></li>
+  </ul>
+</div>
+
+<script>
+// === 1. Population from U.S. Census Bureau ===
+// Docs: https://www.census.gov/data/developers/data-sets.html
+async function loadPopulation() {
+  try {
+    const url = "https://api.census.gov/data/2020/dec/pl?get=P1_001N,NAME&for=place:51000&in=state:36"; 
+    // place:51000 = New York City, state:36 = New York
+    let res = await fetch(url);
+    let data = await res.json();
+    document.getElementById("population").innerText = parseInt(data[1][0]).toLocaleString();
+  } catch(e) {
+    document.getElementById("population").innerText = "Unavailable";
+  }
+}
+
+// === 2. Climate from NOAA API ===
+// Dataset NORMAL_MLY: Monthly 1991-2020 climate normals
+async function loadClimateNOAA() {
+  try {
+    const token = "cGTZCSIxDKVSVGBgyypfkphYoRZNwcOD"; // <-- вставь свой NOAA token
+    const stationId = "GHCND:USW00094728"; // Central Park, NYC
+    const url = `https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=NORMAL_MLY&datatypeid=MLY-TAVG-NORMAL&datatypeid=MLY-PRCP-NORMAL&stationid=${stationId}&startdate=2020-01-01&enddate=2020-12-31&units=metric&limit=1000`;
+
+    let res = await fetch(url, {
+      headers: { token: token }
+    });
+    let data = await res.json();
+
+    let temps = data.results.filter(r => r.datatype === "MLY-TAVG-NORMAL").map(r => r.value);
+    let rains = data.results.filter(r => r.datatype === "MLY-PRCP-NORMAL").map(r => r.value);
+
+    if (temps.length > 0) {
+      let avgTemp = (temps.reduce((a,b) => a+b, 0) / temps.length).toFixed(1);
+      document.getElementById("avg-temp").innerText = avgTemp;
+    } else {
+      document.getElementById("avg-temp").innerText = "N/A";
+    }
+
+    if (rains.length > 0) {
+      let avgRain = (rains.reduce((a,b) => a+b, 0) / rains.length).toFixed(0);
+      document.getElementById("avg-rain").innerText = avgRain;
+    } else {
+      document.getElementById("avg-rain").innerText = "N/A";
+    }
+  } catch(e) {
+    document.getElementById("avg-temp").innerText = "Unavailable";
+    document.getElementById("avg-rain").innerText = "Unavailable";
+  }
+}
+
+// === 3. Current Weather (OpenWeatherMap API) ===
+async function loadWeather() {
+  try {
+    const apiKey = "0b797f6c2aa8d32277d4d386ce49691e"; // <-- вставь свой ключ
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=New York,US&units=metric&appid=${apiKey}`;
+    let res = await fetch(url);
+    let data = await res.json();
+    document.getElementById("weather-temp").innerText = data.main.temp;
+    document.getElementById("weather-cond").innerText = data.weather[0].description;
+  } catch(e) {
+    document.getElementById("weather-temp").innerText = "Unavailable";
+    document.getElementById("weather-cond").innerText = "Unavailable";
+  }
+}
+
+// === Run all ===
+loadPopulation();
+loadClimateNOAA();
+loadWeather();
+</script>
